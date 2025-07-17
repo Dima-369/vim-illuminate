@@ -50,6 +50,20 @@ function M.start()
             M.refresh_references()
         end,
     })
+    
+    -- Additional autocmd for visual mode selection changes
+    vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+        group = AUGROUP,
+        callback = function()
+            local mode = vim.api.nvim_get_mode().mode
+            if mode == 'v' or mode == 'V' or mode == '' or mode == 'vs' or mode == 'Vs' or mode == 's' then
+                -- Force immediate refresh in visual mode
+                vim.schedule(function()
+                    M.refresh_references()
+                end)
+            end
+        end,
+    })
 
     -- Set up auto-attach/detach for the treesitter provider if we can use builtin methods instead of
     -- treesitter modules.
@@ -154,7 +168,10 @@ function M.refresh_references(bufnr, winid)
 
     local timer = vim.loop.new_timer()
     timers[bufnr] = timer
-    timer:start(config.delay(bufnr), 17, vim.schedule_wrap(function()
+    
+    -- Use shorter delay for visual mode for immediate feedback
+    local delay = util.is_visual_mode() and 0 or config.delay(bufnr)
+    timer:start(delay, 17, vim.schedule_wrap(function()
         local ok, err = pcall(function()
             if not bufnr or not vim.api.nvim_buf_is_loaded(bufnr) then
                 stop_timer(timer)
@@ -216,6 +233,12 @@ function M.refresh_references(bufnr, winid)
 end
 
 function M.get_provider(bufnr)
+    -- Check for visual mode first
+    local ok, visual_provider = pcall(require, 'illuminate.providers.visual')
+    if ok and visual_provider.is_ready(bufnr) then
+        return visual_provider, 'visual'
+    end
+    
     for _, provider in ipairs(config.providers(bufnr) or {}) do
         local ok, providerModule = pcall(require, string.format('illuminate.providers.%s', provider))
         if ok and providerModule.is_ready(bufnr) then
