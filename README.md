@@ -69,6 +69,8 @@ require('illuminate').configure({
     should_enable = function(bufnr) return true end,
     -- case_insensitive_regex: sets regex case sensitivity
     case_insensitive_regex = false,
+    -- visual_max_length: maximum length of visual selection to highlight (default: 200)
+    visual_max_length = 200,
     -- disable_keymaps: disable default keymaps
     disable_keymaps = false,
 })

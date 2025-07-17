@@ -14,6 +14,18 @@ function M.get_references(bufnr, cursor_pos)
     end
 
     local text = visual_selection.text
+
+    -- Early exit: Don't process if text is empty or too long
+    -- (visual_selection already checks max length, but double-check for safety)
+    if not text or text == "" or #text > config.visual_max_length() then
+        return {}
+    end
+
+    -- Early exit: Don't process if text contains newlines
+    if text:find('\n') or text:find('\r') then
+        return {}
+    end
+
     local references = {}
 
     -- Get all lines in the buffer

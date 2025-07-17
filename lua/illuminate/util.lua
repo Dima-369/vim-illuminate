@@ -75,9 +75,16 @@ function M.get_visual_selection()
         sel_end_line, sel_end_col = start_line, start_col
     end
 
-    -- Check if selection spans multiple lines
+    -- Early exit: Check if selection spans multiple lines
     if sel_start_line ~= sel_end_line then
         return nil -- Don't highlight multi-line selections
+    end
+
+    -- Early exit: Check selection length before getting text
+    local selection_length = sel_end_col - sel_start_col + 1
+    local config = require('illuminate.config')
+    if selection_length > config.visual_max_length() then
+        return nil -- Don't highlight selections longer than configured limit
     end
 
     -- Get the selected text
@@ -87,6 +94,11 @@ function M.get_visual_selection()
     end
 
     local selected_text = string.sub(lines[1], sel_start_col + 1, sel_end_col + 1)
+
+    -- Early exit: Check for newlines in selection (safety check)
+    if selected_text:find('\n') or selected_text:find('\r') then
+        return nil
+    end
 
     -- Don't highlight empty selections or selections with whitespace only
     if not selected_text or selected_text:match("^%s*$") then

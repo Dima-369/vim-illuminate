@@ -26,6 +26,7 @@ local config = {
     should_enable = nil,
     case_insensitive_regex = false,
     disable_keymaps = false,
+    visual_max_length = 200,
 }
 
 function M.set(config_overrides)
@@ -137,6 +138,10 @@ end
 
 function M.disable_keymaps()
     return M.get()['disable_keymaps']
+end
+
+function M.visual_max_length()
+    return M.get()['visual_max_length'] or 200
 end
 
 return M
