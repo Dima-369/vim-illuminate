@@ -169,8 +169,18 @@ function M.refresh_references(bufnr, winid)
     local timer = vim.loop.new_timer()
     timers[bufnr] = timer
     
-    -- Use shorter delay for visual mode for immediate feedback
-    local delay = util.is_visual_mode() and 0 or config.delay(bufnr)
+    -- Use shorter delay for visual mode, but add some delay for large files
+    local delay
+    if util.is_visual_mode() then
+        local total_lines = vim.api.nvim_buf_line_count(bufnr)
+        if config.large_file_cutoff() and total_lines > config.large_file_cutoff() then
+            delay = 50  -- Small delay for large files in visual mode
+        else
+            delay = 0   -- Immediate for normal files
+        end
+    else
+        delay = config.delay(bufnr)
+    end
     timer:start(delay, 17, vim.schedule_wrap(function()
         local ok, err = pcall(function()
             if not bufnr or not vim.api.nvim_buf_is_loaded(bufnr) then

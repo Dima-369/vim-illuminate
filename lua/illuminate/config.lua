@@ -27,6 +27,8 @@ local config = {
     case_insensitive_regex = false,
     disable_keymaps = false,
     visual_max_length = 200,
+    visual_max_matches = 500,
+    visual_viewport_only = false,
 }
 
 function M.set(config_overrides)
@@ -142,6 +144,14 @@ end
 
 function M.visual_max_length()
     return M.get()['visual_max_length'] or 200
+end
+
+function M.visual_max_matches()
+    return M.get()['visual_max_matches'] or 500
+end
+
+function M.visual_viewport_only()
+    return M.get()['visual_viewport_only'] or false
 end
 
 return M

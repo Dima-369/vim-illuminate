@@ -71,6 +71,10 @@ require('illuminate').configure({
     case_insensitive_regex = false,
     -- visual_max_length: maximum length of visual selection to highlight (default: 200)
     visual_max_length = 200,
+    -- visual_max_matches: maximum number of matches to highlight in visual mode (default: 500)
+    visual_max_matches = 500,
+    -- visual_viewport_only: only search visible area in visual mode (default: false)
+    visual_viewport_only = false,
     -- disable_keymaps: disable default keymaps
     disable_keymaps = false,
 })
