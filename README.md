@@ -1,4 +1,24 @@
-# Overview
+# Visual Mode Highlighting
+
+This fork adds **visual mode highlighting** - select text in visual mode and see all matching instances highlighted throughout the buffer.
+
+## Features
+- **Real-time highlighting**: Highlights update as you extend/shrink visual selection
+- **Performance optimized**: Configurable limits for selection length, match count, and viewport-only searching
+- **Smart filtering**: Automatically skips multi-line selections and overly long text
+- **Large file support**: Respects existing large file settings with additional optimizations
+
+## Visual Mode Configuration
+```lua
+require('illuminate').configure({
+    -- Visual mode specific settings
+    visual_max_length = 200,        -- Max selection length to highlight
+    visual_max_matches = 500,       -- Max matches to find/highlight  
+    visual_viewport_only = false,   -- Only search visible area (good for huge files)
+})
+```
+
+# Original README
 
 Neovim plugin for automatically highlighting other uses of the word under the cursor using either LSP, Tree-sitter, or regex matching.
 
